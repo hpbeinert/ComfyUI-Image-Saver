@@ -42,22 +42,58 @@ class CivitaiHashFetcher:
         params = {
             "username": username,
             "query": model_name,
-            "limit": 1  # Get the most relevant model
+            "limit": 20,  # Fetch more results due to API ranking issues
+            "nsfw": "true"  # Include NSFW models in search results
         }
 
         try:
             # Fetch models by username and model name
-            response = requests.get(base_url, params=params)
+            response = requests.get(base_url, params=params, timeout=10)
             if response.status_code != 200:
                 return (f"Error: API request failed with status {response.status_code}",)
 
             data = response.json()
             items = data.get("items", [])
+
+            # If no results with query, try without query (fallback for API search issues)
+            if not items and params.get("query"):
+                print("ComfyUI-Image-Saver: No results with query, trying without query parameter...")
+                params_no_query = {
+                    "username": username,
+                    "limit": 100,
+                    "nsfw": "true"
+                }
+                response = requests.get(base_url, params=params_no_query, timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    items = data.get("items", [])
+
             if not items:
                 return (f"No models found for user '{username}' with name '{model_name}'",)
 
-            # Take the first model from the search results
-            model = items[0]
+            # Find best matching model (prefer exact/partial matches)
+            model_name_lower = model_name.lower()
+            best_match = None
+
+            # Try exact match first
+            for item in items:
+                if item.get("name", "").lower() == model_name_lower:
+                    best_match = item
+                    break
+
+            # If no exact match, try partial match
+            if not best_match:
+                for item in items:
+                    item_name_lower = item.get("name", "").lower()
+                    if model_name_lower in item_name_lower or item_name_lower.startswith(model_name_lower):
+                        best_match = item
+                        break
+
+            # Fall back to first result if no good match
+            if not best_match:
+                best_match = items[0]
+
+            model = best_match
             model_versions = model.get("modelVersions", [])
             if not model_versions:
                 return ("No model versions found.",)
@@ -76,7 +112,7 @@ class CivitaiHashFetcher:
 
             # Fetch detailed version info
             version_url = f"https://civitai.com/api/v1/model-versions/{version_id}"
-            version_response = requests.get(version_url)
+            version_response = requests.get(version_url, timeout=10)
             if version_response.status_code != 200:
                 return (f"Error: Version API request failed with status {version_response.status_code}",)
 
@@ -90,7 +126,7 @@ class CivitaiHashFetcher:
                     self.last_username = username
                     self.last_model_name = model_name
                     self.last_version = version  # Store version to track changes
-                    self.cached_hash = autov3_hash
+                    self.last_hash = autov3_hash
                     return (autov3_hash,)  # Return the first found hash
 
             return ("No AutoV3 hash found in version files.",)

@@ -1,3 +1,34 @@
+# v1.21.0
+
+- Cleaner naming for batch saves.
+- Allow custom time_format via prompt parameters in image saver.
+
+# v1.20.0
+
+- Add RandomShapeGenerator
+
+# v1.19.0
+
+- Bring sampler/scheduler selectors back.
+
+# v1.18.0
+
+- Add WorkflowInputValue node to retrieve input values from nodes in workflow.
+
+# v1.17.0
+
+- BREAKING CHANGE: sampler/scheduler loaders are removed. Instead AnyToString node is added to help convert sampler/scheduler types to string, which works with native loaders. Besides loader nodes removal, Input Parameters has to be recreated and reconnected with the saver node(s). Check example workflow for reference.
+
+# v1.16.0
+
+- Improved Civitai Hash Fetcher search reliability with smart matching and fallbacks
+- Added NSFW model search support
+- Fixed Civitai Hash Fetcher caching bug
+- Refactored file matching with multi-level fallback strategy
+- Added GGUF model format support
+- Case-insensitive extension check for checkpoints
+- Skip resources with missing hashes
+
 # v1.15.2
 
 - Bugfix: sanitize filename only, without the path

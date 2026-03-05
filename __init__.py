@@ -1,10 +1,11 @@
 from typing import Any
 
 from .nodes import ImageSaver, ImageSaverSimple, ImageSaverMetadata
-from .nodes_literals import SeedGenerator, StringLiteral, SizeLiteral, IntLiteral, FloatLiteral, CfgLiteral, ConditioningConcatOptional
+from .nodes_literals import SeedGenerator, StringLiteral, SizeLiteral, IntLiteral, FloatLiteral, CfgLiteral, ConditioningConcatOptional, RandomShapeGenerator
 from .nodes_loaders import CheckpointLoaderWithName, UNETLoaderWithName
-from .nodes_selectors import SamplerSelector, SchedulerSelector, SchedulerSelectorInspire, SchedulerSelectorEfficiency, SchedulerToString, SamplerToString, SchedulerInspireToString, SchedulerEfficiencyToString, InputParameters
+from .nodes_selectors import SamplerSelector, SchedulerSelector, SchedulerSelectorInspire, SchedulerSelectorEfficiency, InputParameters, AnyToString, WorkflowInputValue
 from .civitai_nodes import CivitaiHashFetcher
+from .random_tag_picker import RandomTagPicker
 
 NODE_CLASS_MAPPINGS: dict[str, Any] = {
     "Checkpoint Loader with Name (Image Saver)": CheckpointLoaderWithName,
@@ -17,6 +18,8 @@ NODE_CLASS_MAPPINGS: dict[str, Any] = {
     "Scheduler Selector (inspire) (Image Saver)": SchedulerSelectorInspire,
     "Scheduler Selector (Eff.) (Image Saver)": SchedulerSelectorEfficiency,
     "Input Parameters (Image Saver)": InputParameters,
+    "Any to String (Image Saver)": AnyToString,
+    "Workflow Input Value (Image Saver)": WorkflowInputValue,
     "Seed Generator (Image Saver)": SeedGenerator,
     "String Literal (Image Saver)": StringLiteral,
     "Width/Height Literal (Image Saver)": SizeLiteral,
@@ -24,11 +27,9 @@ NODE_CLASS_MAPPINGS: dict[str, Any] = {
     "Int Literal (Image Saver)": IntLiteral,
     "Float Literal (Image Saver)": FloatLiteral,
     "Conditioning Concat Optional (Image Saver)": ConditioningConcatOptional,
-    "SchedulerToString (Image Saver)": SchedulerToString,
-    "SchedulerInspireToString (Image Saver)": SchedulerInspireToString,
-    "SchedulerEfficiencyToString (Image Saver)": SchedulerEfficiencyToString,
-    "SamplerToString (Image Saver)": SamplerToString,
+    "RandomShapeGenerator": RandomShapeGenerator,
     "Civitai Hash Fetcher (Image Saver)": CivitaiHashFetcher,
+    "Random Tag Picker (Image Saver)": RandomTagPicker,
 }
 
 WEB_DIRECTORY = "js"
